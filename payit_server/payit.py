@@ -13,14 +13,38 @@ class Seller(db.Model):
   email = db.EmailProperty()
   name = db.StringProperty()
   address = db.PostalAddressProperty()
-  geo = db.GeoPtProperty()
+
+
+class SellerPayment(db.Model):
+  """ Parent: Seller """
+  payment = db.StringProperty()
+  key = db.StringProperty()
+  secret = db.StringProperty()
 
 
 class Buyer(db.Model):
   email = db.EmailProperty()
 
 
+class BuyerPayment(db.Model):
+  """ Parent: Buyer """
+  payment = db.StringProperty()
+  key = db.StringProperty()
+  secret = db.StringProperty()
+
+
 class Product(db.Model):
+  """ Parent: Seller """
+  price = db.FloatProperty()
+  seller_id = db.IntegerProperty()
+
+
+class Transaction(db.Model):
+  """ Parent: Product """
+  buyer_id = db.IntegerProperty()
+  seller_geo = db.GeoPtProperty()
+  buyer_geo = db.GeoPtProperty()
+  product_id = db.IntegerProperty()
   price = db.FloatProperty()
 
 
@@ -49,7 +73,7 @@ class ProductPullRequestHandler(webapp2.RequestHandler):
   def get(self):
     """ Sample
 
-        params: ?sid=12345234&pid=1&pid=2&pid=3
+        params: ?s-email=12345234&pid=1&pid=2&pid=3
         returns:
           [
             {"price": 43.0, "pid": 0, "name": "book1"},
