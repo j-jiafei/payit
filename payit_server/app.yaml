@@ -1,0 +1,15 @@
+application: pay-pay-it
+version: 1-0-0
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: payit.application
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
