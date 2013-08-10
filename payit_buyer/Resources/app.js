@@ -97,7 +97,7 @@ if (Ti.version < 1.8) {
 			enableShipping : false,
 			payment : {
 				merchantName : sellerName,
-				paymentType : Ti.Paypal.PAYMENT_TYPE_GOODS,
+				paymentType : Paypal.PAYMENT_TYPE_GOODS,
 				subtotal : totalPrice,
 				tax : 0,
 				shipping : 0,
