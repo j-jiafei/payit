@@ -1,9 +1,9 @@
-#appname: payit_buyer
-#appid: com.payit.payit_buyer
-#type: mobile
-#guid: 89f098cf-6ef1-42b4-8300-d85dbf5f6869
-#version: 1.0
-#publisher: not specified
-#url: not specified
-#image: appicon.png
-#desc: not specified
+#appname:payit_buyer
+#appid:com.payit.buyer
+#type:mobile
+#guid:89f098cf-6ef1-42b4-8300-d85dbf5f6869
+#version:1.0
+#publisher:jack
+#url:http://
+#image:appicon.png
+#desc:not specified

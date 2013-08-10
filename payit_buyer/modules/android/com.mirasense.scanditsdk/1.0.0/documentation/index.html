@@ -1,0 +1,258 @@
+<h1>Scandit Barcode Scanner SDK Module</h1>
+<h2>Description</h2>
+<p>This module allows developers to incorporate the Scandit Barcode Scanner SDK (<a href="http://www.scandit.com">http://www.scandit.com</a>) into their Titanium mobile apps. </p>
+<h2>Get Started</h2>
+<p>See <a href="http://www.scandit.com/support">http://www.scandit.com/support</a> for a detailed getting started guide</p>
+<h3>Install the Scandit SDK module to your Titanium Studio</h3>
+<ul>
+<li>
+<p>Follow the Appcelerator instructions to add the Scandit SDK module to the "modules" 
+      directory of your Titanium Studio installation:</p>
+<p>See <a href="https://wiki.appcelerator.org/display/tis/Using+Titanium+Modules#UsingTitaniumModules-InstallingModules">https://wiki.appcelerator.org/display/tis/Using+Titanium+Modules#UsingTitaniumModules-InstallingModules</a></p>
+</li>
+<li>
+<p>Add the Scandit SDK module to your tiapp.xml file: </p>
+<p>Find the modules section and add the following line: </p>
+<pre><code>    &lt;module version="1.0.0" platform="android"&gt;com.mirasense.scanditsdk&lt;/module&gt;
+</code></pre>
+</li>
+</ul>
+<h3>Get an Scandit SDK App Key</h3>
+<ul>
+<li>
+<p>Sign up for a free community license at <a href="http://www.scandit.com/pricing">http://www.scandit.com/pricing</a> and copy<br />
+      your  app key from within your Scandit web account. </p>
+<p>There are also other licenses available that include support for enterprise bar codes 
+  such as Code39, Code128, Datamatrix etc. If you are interested in those, just sign 
+  up for the corresponding license at <a href="http://www.scandit.com/pricing">http://www.scandit.com/pricing</a>.</p>
+<p>These licenses come with a different SDK and you need to download the corresponding<br />
+  titanium module from the download section of your Scandit SDK account and add it as
+  described above in step "Install the Scandit SDK module to your Titanium Studio".</p>
+</li>
+</ul>
+<h3>Add the Scandit Barcode Scanner View to your Titanium App</h3>
+<p>Here is a minimal example on how to add the Scandit Barcode Scanner View:</p>
+<pre><code>/*
+* A basic starting point for your application showing how to 
+* instantiate and configure the Scandit Barcode Scanner SDK
+*   
+*/
+
+(function() {
+
+// load the Scandit SDK module
+var scanditsdk = require("com.mirasense.scanditsdk");
+
+// disable the status bar for the camera view on the iphone and ipad
+if(Ti.Platform.osname == 'iphone' || Ti.Platform.osname == 'ipad'){
+        Titanium.UI.iPhone.statusBarHidden = true;
+ }
+
+// instantiate the Scandit SDK Barcode Picker view
+var picker = scanditsdk.createView({
+     "width":Ti.Platform.displayCaps.platformWidth,
+        "height":Ti.Platform.displayCaps.platformHeight
+});
+
+// Initialize the barcode picker, remember to paste your own app key here.
+picker.init("--- ENTER YOUR SCANDIT SDK APP KEY HERE --- SIGN UP AT WWW.SCANDIT.COM", 0);
+
+// Set callback functions for when scanning succeedes and for when the 
+// scanning is canceled.
+picker.setSuccessCallback(function(e) {
+        alert("success (" + e.symbology + "): " + e.barcode);
+});
+picker.setCancelCallback(function(e) {
+        alert("canceled");
+});
+
+// add a tool bar at the bottom of the scan view with a cancel button (iphone/ipad only)
+picker.showToolBar(true);
+
+// Start the scanning process.
+picker.startScanning();
+
+// Create a window to add the picker to and display it. 
+var window = Titanium.UI.createWindow({  
+        title:'Scandit SDK',
+        backgroundColor:'#fff',
+});
+window.add(picker);
+window.open();
+
+})();
+</code></pre>
+<h2>API References</h2>
+<h3><strong>_SCANDITSDK</strong>.init(appKey, cameraFacingPreference)</h3>
+<p>Initiates the barcode picker. The app key is mandatory and is available via the Scandit SDK website. The cameraFacingPreference value takes 0 and 1 values, 0 for the back camera, 1 for the front (if there is no front camera, it will display the back camera).</p>
+<pre><code>picker.init("_your_app_key_", 1);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.startScanning()</h3>
+<p>Starts the scanning process, and triggers the loading and initialization of the recognition engine, in case this has not been done so far.</p>
+<pre><code>picker.startScanning();
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.stopScanning()</h3>
+<p>Stops the scanning process. </p>
+<pre><code>picker.stopScanning();
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.reset()</h3>
+<p>Resets the barcode scanner state. Can be used if a code has been recognized, the user is still close to the code, and the code should be recognized again, e.g. after the user pressed a button.</p>
+<pre><code>picker.reset();
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.set1DScanningEnabled(enabled)</h3>
+<p>Enables or disables the recognition of 1D codes. By default it is enabled.</p>
+<pre><code>picker.set1DScanningEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.set2DScanningEnabled(enabled)</h3>
+<p>Enables or disables the recognition of 2D codes. (Note: 2D scanning is not supported by all Scandit SDK versions). By default it is enabled.</p>
+<pre><code>picker.set2DScanningEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setEan13AndUpc12Enabled(enabled)</h3>
+<p>Enables or disables the recognition of EAN13 and UPC12/UPCA codes. By default it is enabled.</p>
+<pre><code>picker.setEan13AndUpc12Enabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setEan8Enabled(enabled)</h3>
+<p>Enables or disables the recognition of EAN8 codes. By default it is enabled.</p>
+<pre><code>picker.setEan8Enabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setUpceEnabled(enabled)</h3>
+<p>Enables or disables the recognition of UPCE codes. By default it is enabled.</p>
+<pre><code>picker.setUpceEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setCode39Enabled(enabled)</h3>
+<p>Enables or disables the recognition of CODE39 codes. By default it is enabled. Only
+available in the enterprise packages (see <a href="http://www.scandit.com/pricing/">http://www.scandit.com/pricing/</a>).</p>
+<pre><code>picker.setCode39Enabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setCode128Enabled(enabled)</h3>
+<p>Enables or disables the recognition of CODE128 codes. By default it is enabled. Only
+available in the enterprise packages (see <a href="http://www.scandit.com/pricing/">http://www.scandit.com/pricing/</a>).</p>
+<pre><code>picker.setCode128Enabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setItfEnabled(enabled)</h3>
+<p>Enables or disables the recognition of ITF codes. By default it is enabled. Only
+available in the enterprise packages (see <a href="http://www.scandit.com/pricing/">http://www.scandit.com/pricing/</a>).</p>
+<pre><code>picker.setItfEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setQrEnabled(enabled)</h3>
+<p>Enables or disables the recognition of QR codes. By default it is enabled.</p>
+<pre><code>picker.setQrEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setDataMatrixEnabled(enabled)</h3>
+<p>Enables or disables the recognition of Data Matrix codes. By default it is enabled. Only
+available in the enterprise packages (see <a href="http://www.scandit.com/pricing/">http://www.scandit.com/pricing/</a>).</p>
+<pre><code>picker.setDataMatrixEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setInverseDetectionEnabled(enabled)</h3>
+<p>Enables the detection of white on Datamtrix black codes. By default it is disabled. Only
+available in the enterprise packages (see <a href="http://www.scandit.com/pricing/">http://www.scandit.com/pricing/</a>).</p>
+<pre><code>picker.setInverseDetectionEnabled(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.force2dRecognition(force)</h3>
+<p>Forces the engine to always run a 2d recognition, ignoring whether a 2d code was detected in the current frame. By default the recognition is not forced.</p>
+<pre><code>picker.force2dRecognition(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.switchTorchOn(on)</h3>
+<p>Switches the torch on or off. If the torch button is enabled on the overlay, users can change this by clicking it. By default the torch is off.</p>
+<pre><code>picker.switchTorchOn(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setScanningHotSpot(x, y)</h3>
+<p>Changes the location of the spot where the recognition actively scans for barcodes. X and Y can be between 0 and 1, where 0/0 corresponds to the top left corner and 1/1 to the bottom right corner. The default is 0.5/0.5.</p>
+<pre><code>picker.setScanningHotSpot(0.5, 0.3);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setScanningHotSpotHeight(height)</h3>
+<p>Changes the height of the spot where the recognition actively scans for barcodes. The height of the hot spot is given relatively to the height of the screen and has to be between 0.0 and 1.0. Be aware that if the hot spot height is very large, the engine is forced to decrease the quality of the recognition to keep the speed at an acceptable level. The default is 0.25</p>
+<pre><code>picker.setScanningHotSpotHeight(0.3);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.ignorePreviewAspectRatio()</h3>
+<p>Normally the picker adjusts to the aspect ratio of the preview image. If this is called, it will no longer do this. Warning: If the aspect ratio is not kept, the camera feed may be stretched and no longer be a proper representation of what is recorded.</p>
+<p>Has no effect under iOS.</p>
+<pre><code>picker.ignorePreviewAspectRatio();
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.showSearchBar(show)</h3>
+<p>Adds (or removes) a search bar to the top of the scan screen. By default there is no search bar shown.</p>
+<pre><code>picker.showSearchBar(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.showToolBar(show)</h3>
+<p>Adds (or removes) a tool bar at the bottom of the scan screen. By default there is no tool bar shown.</p>
+<pre><code>picker.showToolBar(true);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setInfoBannerOffset(offset)</h3>
+<p>Sets the offset (ratio of the screen height) at which the info banner is shown. The info banner contains the 'powered by Scandit' logo and  the 'most likely barcode UI Element' if it is enabled'. By default this is 0.0</p>
+<pre><code>picker.setInfoBannerOffset(-0.05);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.resetUI()</h3>
+<p>Resets the scan screen user interface to its initial state.</p>
+<pre><code>picker.resetUI();
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setBeepEnabled(enabled)</h3>
+<p>Enables (or disables) the sound when a barcode is recognized. Enabled by default.</p>
+<pre><code>picker.setBeepEnabled(false);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setVibrateEnabled(enabled)</h3>
+<p>Enables or disables the vibration when a barcode is recognized. Enabled by default.</p>
+<pre><code>picker.setVibrateEnabled(false);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTorchEnabled(enabled)</h3>
+<p>Enables or disables the torch toggle button for all devices that support a torch. By default it is enabled.</p>
+<pre><code>picker.setTorchEnabled(false);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTorchButtonRelativePositionAndSize(x, y, width, height)</h3>
+<p>Sets the position at which the button to enable the torch is drawn. The X and Y coordinates are relative to the screen size, which means they have to be between 0 and 1. By default this is: 0.02, 0.12, 35, 35</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setTorchButtonRelativePositionAndSize(0.05, 0.8, 45, 45);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTextForInitializingCamera(text)</h3>
+<p>Sets the text that will be displayed while non-autofocusing cameras are initialized. By default this is: "Initializing camera..."</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setTextForInitializingCamera("Initializing camera...");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTextForInitialScanScreenState(text)</h3>
+<p>Sets the text that will be displayed above the viewfinder to tell the user to align it with the barcode that should be recognized. By default this is: "Align code with box"</p>
+<pre><code>picker.setTextForInitialScanScreenState("Align code with box");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTextForBarcodePresenceDetected(text)</h3>
+<p>Sets the text that will be displayed above the viewfinder to tell the user to align it with the barcode and hold still because a potential code seems to be on the screen. By default this is: "Align code and hold still"</p>
+<pre><code>picker.setTextForBarcodePresenceDetected("Align code and hold still");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setTextForBarcodeDecodingInProgress(text)</h3>
+<p>Sets the text that will be displayed above the viewfinder to tell the user to hold still because a barcode is aligned with the box and the recognition is trying to recognize it. By default this is: "Decoding ..."</p>
+<pre><code>picker.setTextForBarcodeDecodingInProgress("Decoding...");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setSearchBarActionButtonCaption(caption)</h3>
+<p>Sets the caption of the manual entry at the top when a barcode of valid length has been entered. By default this is: "Go"</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setSearchBarActionButtonCaption("Go");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setSearchBarCancelButtonCaption(caption)</h3>
+<p>Sets the caption of the manual entry at the top when no barcode of valid length has been entered. By default this is: "Cancel"</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setSearchBarCancelButtonCaption("Cancel");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setSearchBarPlaceholderText(text)</h3>
+<p>Sets the text shown in the manual entry field when nothing has been entered yet. By default this is: "Scan barcode or enter it here"</p>
+<pre><code>picker.setSearchBarPlaceholderText("Scan barcode or enter it here");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setToolBarButtonCaption(caption)</h3>
+<p>Sets the caption of the tool bar button. By default this is: "Cancel"</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setToolBarButtonCaption("Cancel");
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setViewfinderSize(width, height)</h3>
+<p>Sets the size of the viewfinder relative to the size of the screen size. Changing this value does not(!) affect the area in which barcodes are successfully recognized. It only changes the size of the box drawn onto the scan screen. By default the width is 0.6 and the height is 0.25</p>
+<pre><code>picker.setViewfinderSize(0.9, 0.15);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setMinSearchBarBarcodeLength(length)</h3>
+<p>Sets the minimum size that a barcode entered in the manual searchbar has to have to possibly be valid. By default this is: 8</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setMinSearchBarBarcodeLength(4);
+</code></pre>
+<h3><strong>_SCANDITSDK</strong>.setMaxSearchBarBarcodeLength(length)</h3>
+<p>Sets the maximum sizethat a barcode entered in the manual searchbar can have to possibly be valid. By default this is: 100</p>
+<p>Has no effect under Android.</p>
+<pre><code>picker.setMaxSearchBarBarcodeLength(length)
+</code></pre>
+<h2>Support</h2>
+<p>Check the detailed instructions at <a href="http://www.scandit.com/support">http://www.scandit.com/support</a></p>
+<p>Contact us at info@scandit.com for further information. </p>
+<p>Copyright @ Mirasense AG 2012, all rights reserved.</p>

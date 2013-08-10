@@ -1,0 +1,221 @@
+<h1>Ti.Paypal Module</h1>
+<h2>Description</h2>
+<p>The Ti.Paypal module gives you access to payments via paypal for goods and services.
+Note that Apple does not accept payment through any means other than the in-app
+purchasing store for extensions and subscriptions for your app.</p>
+<h2>Accessing the Ti.Paypal Module</h2>
+<p>To access this module from JavaScript, you would do the following:</p>
+<pre><code>var Paypal = require("ti.paypal");
+</code></pre>
+<h2>Functions</h2>
+<h3>Ti.Paypal.createPaypalButton({...})</h3>
+<p>Creates and returns a <a href="paypalButton.html">Ti.Paypal.PaypalButton</a> object, which is a view.  Note that the view's
+size determines the amount of space on the screen it takes up, <em>not</em> the size of
+the Paypal button, which is determined by a constant.</p>
+<p>WARNING: A paypal button may only be used once! It is designed to be created for one transaction. If the user cancels
+the transaction, or goes through with it, you must recreate the paypal button before allowing them to touch it again.</p>
+<p>Takes one argument, a dictionary containing the following properties:</p>
+<ul>
+<li>appID[string]: The appID issued by Paypal for your application</li>
+<li>language[string]: The language for the UI. Default value: "en_US"</li>
+<li>textStyle[int]: The text for the button; can be <em>Ti.Paypal.PAYPAL_TEXT_PAY</em> or <em>Ti.Paypal.PAYPAL_TEXT_DONATE</em>, defaults to <em>Ti.Paypal.PAYPAL_TEXT_PAY</em>.</li>
+<li>buttonStyle[int]: A constant indicating the style &amp; size of the button. If the textStyle property is set to <em>Ti.Paypal.PAYPAL_TEXT_DONATE</em>, the word "Pay" in the buttons is replaced by "Donate". The language of the button will also change based on the language you pass into the "language" property or the auto detected language on the phone.</li>
+<li>paypalEnvironment[int]: A constant indicating the environment the button runs in</li>
+<li>feePaidByReceiver[boolean]: For PERSONAL transactions, whether or not the Paypal fees are paid by the receiver; if false, any fees are paid by the sender. Defaults to false.</li>
+<li>enableShipping[boolean]: Whether or not to select/include shipping information. Defaults to true.</li>
+<li>cancelUrl[string]</li>
+<li>returnUrl[string]</li>
+</ul>
+<p>To submit a simple payment, you should also set the following property:</p>
+<ul>
+<li>payment[dictionary]: A dictionary describing the parameters of the payment. Properties are:<ul>
+<li>paymentType[int]: A constant indicating the type of payment made. Default: PAYPAL_TYPE_PERSONAL.</li>
+<li>paymentSubtype[int]: The payment subtype for a "SERVICES" type payment (see enumerated values section).  Applicable only if you have been approved for special pricing plans. For any transactionType other than  "TYPE_SERVICE" or if you have not been approved for special pricing plans use "SUBTYPE_NOT_SET" (the default value) as the transactionSubType. Default: SUBTYPE_NOT_SET.</li>
+<li>subtotal[double]: The amount of the payment, not including tax and shipping amounts</li>
+<li>tax[double]: Tax on the payment<br />
+</li>
+<li>shipping[double]: Shipping cost for the transaction (only for HARD_GOODS)<br />
+</li>
+<li>currency[string]: An identifier for the currency the transaction uses; defaults to "USD".</li>
+<li>recipient[string]: The Paypal user who receives the payment.<br />
+</li>
+<li>customID[string]: A custom ID for the whole order; this is any ID that you would like to have associated with the payment.</li>
+<li>ipnUrl[string]: Your Instant Payment Notification URL. This url will be hit by the Paypal server upon completion of the payment.</li>
+<li>merchantName[string]: The name of the merchant the recipient represents.</li>
+<li>memo[string]: A memo to include with the order. This memo will be part of the notification sent by Paypal to the necessary parties.</li>
+<li>invoiceItems[dictionary[]]: An array of dictionaries describing the individual items in this payment:<ul>
+<li>name[string]: The name of the item.</li>
+<li>itemID[string]: The ID of the item.</li>
+<li>totalPrice[double]: The total price for this item.</li>
+<li>itemPrice[double]: The price for one of this item.</li>
+<li>itemCount[int]: The total number of this item included in the transaction.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Or, to submit an advanced payment (such as a chained or parallel payment), set the following property. Note that the only programmatic difference between chained and parallel payments is the "isPrimary" property set on one of your advanced payments.</p>
+<ul>
+<li>advancedPayment[dictionary]: A dictionary describing the parameters of the advanced payment. Properties are:<ul>
+<li>currency[string]: An identifier for the currency the transaction uses; defaults to "USD".</li>
+<li>ipnUrl[string]: Your Instant Payment Notification URL. This url will be hit by the Paypal server upon completion of the payment.</li>
+<li>memo[string]: A memo to include with the order. This memo will be part of the notification sent by Paypal to the necessary parties.</li>
+<li>payments[dictionary[]]: An array of dictionaries describing the individual payments involved:<ul>
+<li>isPrimary[bool]: Whether or not this is the primary payment. If one payment has this, this is a chained payment. If none, then it is a parallel payment.</li>
+<li>paymentType[int]: A constant indicating the type of payment made. Default: PAYPAL_TYPE_PERSONAL.</li>
+<li>paymentSubtype[int]: The payment subtype for a "SERVICES" type payment (see enumerated values section).  Applicable only if you have been approved for special pricing plans. For any transactionType other than  "TYPE_SERVICE" or if you have not been approved for special pricing plans use "SUBTYPE_NOT_SET" (the default value) as the paymentSubtype. Default: SUBTYPE_NOT_SET.</li>
+<li>subtotal[double]: The amount of the payment, not including tax and shipping amounts</li>
+<li>tax[double]: Tax on the payment<br />
+</li>
+<li>shipping[double]: Shipping cost for the transaction (only for HARD_GOODS)<br />
+</li>
+<li>recipient[string]: The Paypal user who receives the payment.<br />
+</li>
+<li>customID[string]: A custom ID for the whole order; this is any ID that you would like to have associated with the payment.</li>
+<li>merchantName[string]: The name of the merchant the recipient represents.</li>
+<li>invoiceItems[dictionary[]]: An array of dictionaries describing the individual items in this payment:<ul>
+<li>name[string]: The name of the item.</li>
+<li>itemID[string]: The ID of the item.</li>
+<li>totalPrice[double]: The total price for this item.</li>
+<li>itemPrice[double]: The price for one of this item.</li>
+<li>itemCount[int]: The total number of this item included in the transaction.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Or, to submit a Preapproval for payment, set the following properties.</p>
+<ul>
+<li>preapprovalKey[string]: The preapproval key you received from PayPal. Please reference PayPal's documentation for more information on how preapproval works, and what steps are necessary to get this key.</li>
+<li>preapproval[dictionary]: A dictionary describing the parameters of the preapproval. Properties are:<ul>
+<li>type[int]: A constant indicating the type of preapproval agreement to make. Default: PAYPAL_PREAPPROVAL_TYPE_AGREE_AND_PAY.</li>
+<li>currency[string]: An identifier for the currency the transaction uses; defaults to "USD".</li>
+<li>dayOfMonth[int]: The day of the month.</li>
+<li>dayOfWeek[int]: Use the "Preapproval Days" constants below.</li>
+<li>isApproved[bool]</li>
+<li>paymentPeriod[int]: Use the "Preapproval Period" constants below.</li>
+<li>pinRequired[bool]</li>
+<li>maxAmountPerPayment[double]</li>
+<li>maxNumberOfPayments[int]</li>
+<li>maxNumberOfPaymentsPerPeriod[int]</li>
+<li>maxTotalAmountOfAllPayments[double]</li>
+<li>merchantName[string]: The name of the merchant the recipient represents.</li>
+<li>ipnUrl[string]: Your Instant Payment Notification URL. This url will be hit by the Paypal server upon completion of the payment.</li>
+<li>memo[string]: A memo to include with the order. This memo will be part of the notification sent by Paypal to the necessary parties.</li>
+</ul>
+</li>
+</ul>
+<p><strong>NOTE</strong>: Once set on a button, payment information CANNOT be changed.</p>
+<h2>Properties</h2>
+<h2>Properties - Text Types for Paypal Button</h2>
+<h3>Ti.Paypal.PAYPAL_TEXT_PAY[int] (read-only)</h3>
+<p>A constant for a button's "textStyle" property causing "Pay" to be displayed.</p>
+<h3>Ti.Paypal.PAYPAL_TEXT_DONATE[int] (read-only)</h3>
+<p>A constant for a button's "textStyle" property causing "Donate" to be displayed.</p>
+<h2>Properties - Payment Types</h2>
+<h3>Ti.Paypal.PAYMENT_TYPE_GOODS[int] (read-only)</h3>
+<p>A constant for a button's "transactionType" property which denotes the sale of physical goods. This is the default payment type.</p>
+<h3>Ti.Paypal.PAYMENT_TYPE_SERVICE[int] (read-only)</h3>
+<p>A constant for a button's "transactionType" property which denotes the sale of a service.</p>
+<h3>Ti.Paypal.PAYMENT_TYPE_PERSONAL[int] (read-only)</h3>
+<p>A constant for a button's "transactionType" property which denotes a personal payment.</p>
+<h3>Ti.Paypal.PAYMENT_TYPE_NONE[int] (read-only)</h3>
+<p>A constant for a button's "transactionType" property which denotes a payment where no money is exchanged.</p>
+<h2>Properties - Preapproval Types</h2>
+<h3>Ti.Paypal.PREAPPROVAL_TYPE_AGREE_AND_PAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_TYPE_AGREE[int] (read-only)</h3>
+<h2>Properties - Preapproval Days</h2>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_SUNDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_MONDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_TUESDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_WEDNESDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_THURSDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_FRIDAY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_DAY_SATURDAY[int] (read-only)</h3>
+<h2>Properties - Preapproval Periods</h2>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_ANNUALLY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_BIWEEKLY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_DAILY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_MONTHLY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_NONE[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_SEMIMONTHLY[int] (read-only)</h3>
+<h3>Ti.Paypal.PREAPPROVAL_PERIOD_WEEKLY[int] (read-only)</h3>
+<h2>Properties - Button Sizes</h2>
+<h3>Ti.Paypal.BUTTON_152x33[int] (read-only)</h3>
+<p>A paypal button sized for a 152x33 pixel view.</p>
+<h3>Ti.Paypal.BUTTON_194x37[int] (read-only)</h3>
+<p>A paypal button sized for a 194x37 pixel view.</p>
+<h3>Ti.Paypal.BUTTON_278x43[int] (read-only)</h3>
+<p>A paypal button sized for a 278x43 pixel view.</p>
+<h3>Ti.Paypal.BUTTON_294x45[int] (read-only)</h3>
+<p>A paypal button sized for a 294x45 pixel view.</p>
+<h2>Properties - Environments</h2>
+<h3>Ti.Paypal.PAYPAL_ENV_LIVE[int] (read-only)</h3>
+<p>Sets paypal to use the production servers for processing payments.
+Payments are actual transactions.</p>
+<h3>Ti.Paypal.PAYPAL_ENV_SANDBOX[int] (read-only)</h3>
+<p>Sets paypal to use the testing servers for processing payments.
+Payments use testing funds in the development sandbox.</p>
+<h3>Ti.Paypal.PAYPAL_ENV_NONE[int] (read-only)</h3>
+<p>Sets paypal to use internal demonstration data for payments and server operations.</p>
+<h2>Properties - Payment Subtypes</h2>
+<p>The payment subtype for a "SERVICES" type payment (see enumerated values section).  Applicable only if you have been
+approved for special pricing plans. For any transactionType other than  "TYPE_SERVICE" or if you have not been approved
+for special pricing plans use "SUBTYPE_NOT_SET" (the default value) as the transactionSubType.</p>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_NONE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_AFFILIATE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_B2B [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_PAYROLL [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_REBATES [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_REFUNDS [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_REIMBURSEMENTS [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_DONATIONS [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_UTILITIES [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_TUITION [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_GOVERNMENT [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_INSURANCE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_REMITTANCES [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_RENT [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_MORTGAGE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_MEDICAL [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_CHILDCARE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_EVENTS [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_CONTRACTORS [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_ENTERTAINMENT [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_TOURISM [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_INVOICE [int] (read-only)</h3>
+<h3>Ti.Paypal.PAYMENT_SUBTYPE_TRANSFER [int] (read-only)</h3>
+<h2>Events</h2>
+<h3>paymentCancelled</h3>
+<p>Sent upon cancellation of payment.  No event dictionary is sent.</p>
+<h3>paymentFailed</h3>
+<p>Sent upon failure to process a payment.  The event dictionary is:</p>
+<ul>
+<li>errorCode[int, Android]: The error code for the error</li>
+<li>errorMessage[string, Android]: The error that occurred</li>
+<li>correlationID[string, iOS]: The correlation ID for the failed payment</li>
+</ul>
+<h3>paymentSuccess</h3>
+<p>Sent up on successful processing of a payment.  The event dictionary is:</p>
+<ul>
+<li>transactionID[string]: The identifier representing this transaction.</li>
+</ul>
+<h3>unknownResponse</h3>
+<p>Sent when we receive an unrecognized response from PayPal.</p>
+<h3>buttonDisplayed</h3>
+<p>Fired when the PayPal button successfully loads and is displayed.</p>
+<h3>buttonError</h3>
+<p>Fired when the PayPal button fails to load. This ordinarily only happens when app is unable to communicate with PayPal's
+servers.</p>
+<h2>Usage</h2>
+<p>See example.</p>
+<h2>Author</h2>
+<p>Stephen Tramer</p>
+<h2>Module History</h2>
+<p>View the <a href="changelog.html">change log</a> for this module.</p>
+<h2>Feedback and Support</h2>
+<p>Please direct all questions, feedback, and concerns to <a href="mailto:info@appcelerator.com?subject=Android%20PayPal%20Module">info@appcelerator.com</a>.</p>
+<h2>License</h2>
+<p>Copyright(c) 2010 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.</p>

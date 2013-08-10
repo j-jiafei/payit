@@ -1,0 +1,17 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 2.2.1
+apiversion: 2
+description: PayPal module for PayPal transactions
+author: Marshall Culpepper/Appcelerator 
+license: Appcelerator Commercial License 
+copyright: Copyright (c) 2010-2011 by Appcelerator, Inc.
+
+# these should not be edited
+name: paypal
+moduleid: ti.paypal
+guid: 806d55c1-4ff6-4b11-951a-115af5053252
+platform: android
+minsdk: 1.8.0.1

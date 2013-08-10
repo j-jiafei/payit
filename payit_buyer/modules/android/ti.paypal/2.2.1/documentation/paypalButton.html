@@ -1,0 +1,28 @@
+<h1>Ti.Paypal.PaypalButton</h1>
+<h2>Description</h2>
+<p>A <em>Ti.Paypal</em> module object which represents a button that performs PayPal operations.</p>
+<h2>Warning</h2>
+<p>A paypal button may only be used once! It is designed to be created for one transaction. If the user cancels
+the transaction, or goes through with it, you must recreate the paypal button before allowing them to touch it again.</p>
+<h2>Events</h2>
+<h3>paymentCancelled</h3>
+<p>Sent upon cancellation of payment.  No event dictionary is sent.</p>
+<h3>paymentFailed</h3>
+<p>Sent upon failure to process a payment.  The event dictionary is:</p>
+<ul>
+<li>errorCode[int, Android]: The error code for the error</li>
+<li>errorMessage[string, Android]: The error that occurred</li>
+<li>correlationID[string, iOS]: The correlation ID for the failed payment</li>
+</ul>
+<h3>paymentSuccess</h3>
+<p>Sent up on successful processing of a payment.  The event dictionary is:</p>
+<ul>
+<li>transactionID[string]: The identifier representing this transaction.</li>
+</ul>
+<h3>unknownResponse</h3>
+<p>Sent when we receive an unrecognized response from PayPal.</p>
+<h3>buttonDisplayed</h3>
+<p>Fired when the PayPal button successfully loads and is displayed.</p>
+<h3>buttonError</h3>
+<p>Fired when the PayPal button fails to load. This ordinarily only happens when app is unable to communicate with PayPal's
+servers.</p>

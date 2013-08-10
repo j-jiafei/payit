@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <id>com.payit.payit_buyer</id>
+    <id>com.payit.buyer</id>
     <name>payit_buyer</name>
     <version>1.0</version>
     <publisher>jack</publisher>
@@ -37,7 +37,12 @@
         </splash>
         <theme>default</theme>
     </mobileweb>
-    <modules/>
+    <modules>
+        <module platform="android">ti.paypal</module>
+        <module platform="iphone">ti.paypal</module>
+        <module platform="android">com.mirasense.scanditsdk</module>
+        <module platform="iphone">com.mirasense.scanditsdk</module>
+    </modules>
     <deployment-targets>
         <target device="blackberry">false</target>
         <target device="android">true</target>

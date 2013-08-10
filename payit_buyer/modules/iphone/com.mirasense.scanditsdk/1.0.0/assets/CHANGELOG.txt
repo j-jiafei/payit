@@ -1,0 +1,6 @@
+
+
+Changes in ScanditSDK 1.0.0 - Oct 21 2012
+
+* initial release of Scandit SDK Titanium module with Scandit SDK iOS Version 2.2.4. 
+
