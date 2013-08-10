@@ -1,3 +1,13 @@
+payit_buyer/tmp/*
+payit_seller/tmp/*
+payit_buyer/build/*
+payit_seller/build/*
+payit_buyer/build.log
+payit_seller/build.log
+payit_buyer/.fastdev.lock
+payit_seller/.fastdev.lock
+payit_buyer/.DS_Store
+payit_seller/.DS_Store
 tmp
 build/*
 build.log
