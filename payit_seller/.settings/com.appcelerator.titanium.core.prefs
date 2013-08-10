@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/appid=com.payit.seller
+provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/filepath=/Users/jack/Library/MobileDevice/Provisioning Profiles/36FB2507-0E70-4A04-B85A-2FC6792C8D54.mobileprovision
+provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/name=PayIt Seller
+provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/uuid=36FB2507-0E70-4A04-B85A-2FC6792C8D54
+provisioning_profiles/development/AC0F7919-A49E-4505-B0E3-490B94246973/appid=com.reppio.reppio
+provisioning_profiles/development/AC0F7919-A49E-4505-B0E3-490B94246973/filepath=/Users/jack/Library/MobileDevice/Provisioning Profiles/AC0F7919-A49E-4505-B0E3-490B94246973.mobileprovision
+provisioning_profiles/development/AC0F7919-A49E-4505-B0E3-490B94246973/name=Reppio Development
+provisioning_profiles/development/AC0F7919-A49E-4505-B0E3-490B94246973/uuid=AC0F7919-A49E-4505-B0E3-490B94246973
+provisioning_profiles/development/CB34C48F-480A-4D13-BF05-F705B80BA29C/appid=com.reppio.reppio
+provisioning_profiles/development/CB34C48F-480A-4D13-BF05-F705B80BA29C/filepath=/Users/jack/Library/MobileDevice/Provisioning Profiles/Reppio_Development.mobileprovision
+provisioning_profiles/development/CB34C48F-480A-4D13-BF05-F705B80BA29C/name=Reppio Development
+provisioning_profiles/development/CB34C48F-480A-4D13-BF05-F705B80BA29C/uuid=CB34C48F-480A-4D13-BF05-F705B80BA29C

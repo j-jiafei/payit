@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <id>com.payit.payit_seller</id>
-    <name>payit_seller</name>
+    <id>com.payit.seller</id>
+    <name>seller</name>
     <version>1.0</version>
     <publisher>jack</publisher>
     <url>http://</url>
