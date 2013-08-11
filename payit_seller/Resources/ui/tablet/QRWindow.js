@@ -116,9 +116,17 @@ function QRWindow(itemid, itemtitle, itemprice,iteminv) {
 	confirmButton.addEventListener('click', function() {
 		//TODO: handle some kind of confirmation that
 		//the sale has taken place
-		
+
 		//just close the window
-		closeButton.fireEvent('click');
+		QRCodeView = null;
+		csvGen=null;
+		email=null;
+		self.remove(qrCodeView);
+		self.remove(closeButton);
+		self.close({
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
+		self=null;
 	});
 
 	rightView.add(closeButton);
