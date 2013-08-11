@@ -17,17 +17,19 @@ function ApplicationWindow(title) {
 		"Algebra 2: A Teaching Textbook",
 		"Educational Facilities Planning",
 		"Veterinary Psychology",
-		"Blah1",
-		"Blah2"];
-	var itemPrices = [50,20,30,60,10,90];
+		"Founders at Work",
+		"The Brothers Karamazov"];
+	var itemPrices = [50,20,30,60,50,90];
+	var itemInventory = [1,2,1,2,1,1];
 	var itemIds2 = ["6","7","8","9","10","11"];
-	var itemTitles2 = ["Fermat\'s Enigma",
-		"Algebra 2: A Teaching Textbook",
-		"Educational Facilities Planning",
-		"Veterinary Psychology",
-		"Blah1",
-		"Blah2"];		
-	var itemPrices2 = [50,20,30,60,10,90];
+	var itemTitles2 = ["The Legend of YAOTL",
+		"Harry Potter Collection",
+		"Donuts",
+		"Godzilla!",
+		"Green Eggs and Ham",
+		"Identifying Wood"];		
+	var itemInventory2 = [2,2,3,2,1,5];
+	var itemPrices2 = [10,110,30,30,10,2000];
 
 	//create a gridview with horizontal layout
 	//to contain our images
@@ -83,13 +85,15 @@ function ApplicationWindow(title) {
 			id: i,
 			itemTitle: itemTitles[i],
 			itemPrice: itemPrices[i],
+			itemInv: itemInventory[i],
 			image: '/images/item' + String(i) + '.jpg'
 		});
 		pic.addEventListener('click', function(e) {
 			var itemId = e.source.id;
 			var itemTitle = e.source.itemTitle;
 			var itemPrice = e.source.itemPrice;
-			qrWindow(itemId,itemTitle,itemPrice).open({
+			var itemInv = e.source.itemInv;
+			qrWindow(itemId,itemTitle,itemPrice,itemInv).open({
 				transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT
 			});
 		});
@@ -109,13 +113,17 @@ function ApplicationWindow(title) {
 			id: i,
 			itemTitle: itemTitles2[i-6],
 			itemPrice: itemPrices2[i-6],
+			itemInv: itemInventory2[i-6],
 			image: '/images/item' + String(i) + '.jpg'
 		});
 		pic.addEventListener('click', function(e) {
 			var itemId = e.source.id;
 			var itemTitle = e.source.itemTitle;
 			var itemPrice = e.source.itemPrice;
-			qrWindow(itemId,itemTitle,itemPrice).open();
+			var itemInv = e.source.itemInv;
+			qrWindow(itemId,itemTitle,itemPrice,itemInv).open({
+				transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT
+			});
 		});
 		view.add(pic);
 		gridView2.add(view);

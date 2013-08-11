@@ -1,4 +1,4 @@
-function QRWindow(itemid, itemtitle, itemprice) {
+function QRWindow(itemid, itemtitle, itemprice,iteminv) {
 	
 	//get the seller email
 	var email = Ti.App.Properties.getString('email');
@@ -78,7 +78,8 @@ function QRWindow(itemid, itemtitle, itemprice) {
 		left:20,
 	});
 	var infoLabel = Ti.UI.createLabel({
-		text: 'Price:  $'+String(itemprice)+
+		text: 'Inventory: '+String(iteminv)+
+			  '\n\nPrice:  $'+String(itemprice)+
 			  '\nTax:    $'+String(tax)+
 			  '\nTotal:  $'+String(total),
 		top:20,	
@@ -112,6 +113,13 @@ function QRWindow(itemid, itemtitle, itemprice) {
 		});
 		self=null;
 	});	
+	confirmButton.addEventListener('click', function() {
+		//TODO: handle some kind of confirmation that
+		//the sale has taken place
+		
+		//just close the window
+		closeButton.fireEvent('click');
+	});
 
 	rightView.add(closeButton);
 	rightView.add(confirmButton);
