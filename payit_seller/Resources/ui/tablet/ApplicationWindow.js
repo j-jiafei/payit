@@ -15,8 +15,7 @@ function ApplicationWindow(title) {
 
 	//create the images
 	var qrWindow = require('/ui/tablet/QRWindow');
-	var i=0;
-	// for (var i=0; i<=5; i++) {
+	for (var i=0; i<=5; i++) {
 		//create a view with a picture
 		var view = Ti.UI.createView({
 			backgroundColor:'#CCC',
@@ -26,15 +25,16 @@ function ApplicationWindow(title) {
 			top:20
 		});
 		var pic = Ti.UI.createImageView({
+			id: i,
 			image: '/images/item' + String(i) + '.jpg'
 		});
-		pic.addEventListener('click', function() {
-			//send to a screen with the QR code			
-			qrWindow(i).open();
+		pic.addEventListener('click', function(e) {
+			var itemId = e.source.id;
+			qrWindow(itemId).open();
 		});
 		view.add(pic);
 		gridView.add(view);
-	// }
+	}
 
 	self.add(gridView);
 
