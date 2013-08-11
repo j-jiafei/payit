@@ -5,7 +5,8 @@ function QRWindow(itemid) {
 		layout:'vertical'
 	});
 
-	var qrcode = require('/library/TiQRCodeView/Resources/qrcode').QRCode({
+	//QR CODE *************************************
+	var qrcode = require('/library/TiQR/Resources/qrcode').QRCode({
 		typeNumber: 4,
 		errorCorrectLevel: 'M'
 	});
@@ -24,6 +25,10 @@ function QRWindow(itemid) {
 
 	//add stuff
 	self.add(qrCodeView);
+
+	//CREDIT CARD SCANNER *************************
+	var creditcard = require('ti.cardio');
+	alert(creditcard);
 
 	//button to close the window
 	var closeButton = Ti.UI.createButton({
