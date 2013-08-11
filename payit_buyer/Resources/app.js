@@ -62,7 +62,7 @@ if (Ti.version < 1.8) {
 			});
 			var labelCell = Ti.UI.createLabel({
 				left : 0,
-				width : "50%",
+				width : "60%",
 				text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
 				font : {
 					fontSize : 16
@@ -185,11 +185,13 @@ if (Ti.version < 1.8) {
 				alert("Please make sure you are connected to the internet.");
 			}
 			var emailSubject = Ti.Network.encodeURIComponent("Receipt for Transaction " + e.transaction);
-
-			//xhr.open("GET", "https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com");
-			xhr.open("GET", "https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com");
-
+			
+			var sendGridAddress="https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com";
+			
+			xhr.open("GET", sendGridAddress);
 			xhr.send();
+			
+			alert(sendGridAddress);
 
 			var doneButton = Ti.UI.createButton({
 				title : "Done",
