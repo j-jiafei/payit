@@ -32,10 +32,14 @@ if (Ti.version < 1.8) {
 
 	function restartApp() {
 		activeWindow.close();
+		openMainWindowAndScanner();
+	}
+
+	function openMainWindowAndScanner() {
 		activeWindow = createWindow();
 		activeWindow.open();
-		
-			//load scanner view
+
+		//load scanner view
 		//it should scan information, and return info back
 		//to this view via some event
 
@@ -69,7 +73,6 @@ if (Ti.version < 1.8) {
 			backgroundColor : 'white'
 		});
 
-	
 		//add listener for product data from server
 		Ti.App.addEventListener('getBarCodeData', function(data) {
 
@@ -101,8 +104,7 @@ if (Ti.version < 1.8) {
 				width : "100%",
 				text : "Order Summary",
 				font : {
-					fontSize : 30,
-				},
+					fontSize : 30},
 				textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			});
 
@@ -113,15 +115,15 @@ if (Ti.version < 1.8) {
 				totalPrice += productListData[i]["itemPrice"];
 
 				var row = Ti.UI.createTableViewRow({
-					height : 20
+					height : 25
 				});
 				var labelCell = Ti.UI.createLabel({
 					left : 0,
 					width : "50%",
 					text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
 					font : {
-						fontSize : 16,
-					},
+						fontSize : 16
+						},
 					textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 				});
 				var priceCell = Ti.UI.createLabel({
@@ -157,6 +159,7 @@ if (Ti.version < 1.8) {
 				text : "Total:",
 				font : {
 					fontSize : 16,
+					fontWeight: "bold"
 				},
 				textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			});
@@ -165,7 +168,8 @@ if (Ti.version < 1.8) {
 				width : "50%",
 				text : "$" + priceFormatter(totalPrice),
 				font : {
-					fontSize : 16
+					fontSize : 16,
+					fontWeight: "bold"
 				},
 				textAlign : Ti.UI.TEXT_ALIGNMENT_RIGHT,
 			});
@@ -273,34 +277,6 @@ if (Ti.version < 1.8) {
 		return self;
 	}
 
-	activeWindow = createWindow();
-	activeWindow.open();
-	
-		//load scanner view
-		//it should scan information, and return info back
-		//to this view via some event
-
-		if (Ti.Platform.model == 'google_sdk' || Ti.Platform.model == 'Simulator') {
-			// if simulator skip bar code
-			var xhr = Ti.Network.createHTTPClient();
-			xhr.onload = function() {
-				var response = JSON.parse(this.responseText);
-				Ti.App.fireEvent('getBarCodeData', response);
-				scannerWindow.close();
-
-				if (Ti.Platform.osname == 'iphone' || Ti.Platform.osname == 'ipad') {
-					Ti.UI.iPhone.statusBarHidden = false;
-				}
-			};
-			xhr.onerror = function() {
-				alert("Please make sure you are connected to the internet.");
-			}
-			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=demo@bookstore.com&pid=1&pid=2&pid=3&pid=3");
-			xhr.send();
-		} else {
-			barCodeScanner = require('modules/pages/barcode');
-			barCodeScanner.startScan();
-
-		}
+	openMainWindowAndScanner();
 
 })();
