@@ -48,10 +48,7 @@ module.exports = {
 			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=" + sellerAndProductsArray[0] + pidString);
 			xhr.send();
 		});
-		picker.setCancelCallback(function(e) {
-			scannerWindow.close();
-		});
-		picker.showToolBar(true);
+	
 		picker.startScanning();
 		scannerWindow.add(picker);
 		scannerWindow.open();
