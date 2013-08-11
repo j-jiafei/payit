@@ -52,8 +52,11 @@ class Transaction(db.Model):
   """ Parent: Product """
   buyer_id = db.IntegerProperty()
   price = db.FloatProperty()
+  count = db.IntegerProperty()
+  paypal_transaction_id = db.StringProperty()
   seller_geo = db.GeoPtProperty()
   buyer_geo = db.GeoPtProperty()
+  timestamp = db.DateTimeProperty(auto_now_add=True)
 
 
 class ProductPullRequestDummyHandler(webapp2.RequestHandler):
@@ -189,8 +192,13 @@ class ListTransactionRequestHandler(webapp2.RequestHandler):
     if seller is None:
       session['sid'] = None
       self.redirect('/')
+    transactions = Transaction.all().ancestor(seller.key()).fetch(limit=5)
+    for t in transactions:
+      t.name = Product.get(t.key().parent()).name
+    print len(transactions)
     template_values = {
-      'name': seller.name
+      'name': seller.name,
+      'transactions': transactions
     }
     template = JINJA_ENVIRONMENT.get_template('transaction_list.html')
     self.response.write(template.render(template_values))

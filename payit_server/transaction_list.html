@@ -32,37 +32,23 @@
       <h1>Transaction Records</h1>
       <table class="table">
         <tr>
-          <th>ID</th>
+          <th>Transaction ID</th>
           <th>Name</th>
           <th>Count</th>
           <th>Total Price</th>
           <th>Paypal Transaction ID</th>
           <th>Timestamp</th>
         </tr>
-        <tr>
-          <td>1</td>
-          <td>Book 1</td>
-          <td>1</td>
-          <td>43.0</td>
-          <td>125af3214</td>
-          <td>2013-08-10 23:48</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Book 2</td>
-          <td>1</td>
-          <td>65.0</td>
-          <td>125af3218</td>
-          <td>2013-08-10 23:48</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Book 3</td>
-          <td>1</td>
-          <td>21.0</td>
-          <td>125af32234</td>
-          <td>2013-08-10 23:48</td>
-        </tr>
+        {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.key().id() }}</td>
+            <td>{{ transaction.name }} </td>
+            <td>{{ transaction.count }} </td>
+            <td>{{ transaction.price }} </td>
+            <td>{{ transaction.paypal_transaction_id }} </td>
+            <td>{{ transaction['timestamp'] }} </td>
+          </tr>
+        {% endfor %}
       </table>
       <ul class="pagination pull-right">
         <li><a href='#'>1</a></li>
