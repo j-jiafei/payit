@@ -2,6 +2,12 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #eee;
+  background: url(http://1.bp.blogspot.com/_S-9f3rWuWYA/TCehubQGtDI/AAAAAAAAB2o/96cw_ztEULU/s1600/Stanley+%26+Livingstone+The+Hague+Travel+bookstore.jpg) no-repeat fixed;
+}
+
+.container {
+  background-color:rgba(255,255,255,0.9);
+  width:30%;
 }
 
 .form-signin {
