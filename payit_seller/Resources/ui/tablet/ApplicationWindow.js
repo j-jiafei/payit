@@ -89,7 +89,9 @@ function ApplicationWindow(title) {
 			var itemId = e.source.id;
 			var itemTitle = e.source.itemTitle;
 			var itemPrice = e.source.itemPrice;
-			qrWindow(itemId,itemTitle,itemPrice).open();
+			qrWindow(itemId,itemTitle,itemPrice).open({
+				transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT
+			});
 		});
 		view.add(pic);
 		gridView.add(view);

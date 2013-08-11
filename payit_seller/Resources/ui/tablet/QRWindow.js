@@ -1,19 +1,48 @@
 function QRWindow(itemid, itemtitle, itemprice) {
+	
+	//get the seller email
+	var email = Ti.App.Properties.getString('email');
 
 	var self = Ti.UI.createWindow({
+		backgroundColor:'#EEE',
+		layout:'vertical',
+		top:45,
+		height:'90%'
+	});
+	var top = Ti.UI.createView({
+		top:20,
+		margin:20,
+		width:'80%',
+		height:400,
+		borderColor:'white',
 		backgroundColor:'white',
+		borderWidth:5,
+		borderRadius:10,
+		layout:'vertical'
+	});
+	var bottom = Ti.UI.createView({
+		top:20,
+		margin:20,
+		width:'80%',
+		height:400,
+		borderColor:'white',
+		backgroundColor:'white',
+		borderWidth:5,
+		borderRadius:10,
 		layout:'vertical'
 	});
 	var title = Ti.UI.createLabel({
-		top:150,
+		top:10,
 		text: itemtitle,
-		height:50,
+		width:'100%',
+		height:45,
 		width:500,
-		minimumFontSize:40
+		minimumFontSize:35,
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 	});	
 	var container = Ti.UI.createView({
 		layout:'horizontal',
-		width:'70%'
+		width:'100%'
 	});
 
 	//compute stuff
@@ -30,8 +59,7 @@ function QRWindow(itemid, itemtitle, itemprice) {
 	});
 	var csvGen = require('/ui/common/csvGen');
 
-	//get the seller email
-	var arrayToEncode = ['jack.hs.chua@gmail.com', String(itemid)];
+	var arrayToEncode = [email, String(itemid)];
 	var stringToEncode = csvGen(arrayToEncode);
 	var qrCodeView = qrcode.createQRCodeView({
 		width:300,
@@ -42,21 +70,24 @@ function QRWindow(itemid, itemtitle, itemprice) {
 	})
 
 	//add stuff
-	container.add(qrCodeView);
+	top.add(qrCodeView);
 
 	//button to close the window
 	var rightView = Ti.UI.createView({
-		layout:'vertical'
+		layout:'vertical',
+		left:20,
 	});
 	var infoLabel = Ti.UI.createLabel({
 		text: 'Price:  $'+String(itemprice)+
 			  '\nTax:    $'+String(tax)+
 			  '\nTotal:  $'+String(total),
-		top:50,		
+		top:20,	
+		left:40,	
+		width:200
 	});
 	var closeButton = Ti.UI.createButton({
-		top:50,
-		title:"Close window",
+		top:20,
+		title:"Back to store",
 		width:200,
 		height:30,
 		backgroundColor:'#CCC',
@@ -73,17 +104,23 @@ function QRWindow(itemid, itemtitle, itemprice) {
 	closeButton.addEventListener('click',function() {
 		QRCodeView = null;
 		csvGen=null;
+		email=null;
 		self.remove(qrCodeView);
 		self.remove(closeButton);
-		self.close();
+		self.close({
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
 		self=null;
 	});	
-	rightView.add(infoLabel);
+
 	rightView.add(closeButton);
 	rightView.add(confirmButton);
+	container.add(infoLabel);
 	container.add(rightView);
-	self.add(title);
-	self.add(container);
+	bottom.add(title);
+	bottom.add(container);
+	self.add(top);
+	self.add(bottom);
 
 	return self;
 }
