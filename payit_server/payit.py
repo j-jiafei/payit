@@ -164,6 +164,8 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
     seller_email = self.request.get('semail')
     product_id = int(self.request.get('pid'))
     price = float(self.request.get('price'))
+    count = int(self.request.get('count'))
+    paypal_transaction_id = self.request.get('paypaltid')
     seller = Seller.all().filter('email = ', seller_email).get()
     if seller is None:
       self.response.write('seller is None: ' + seller_email)
@@ -178,7 +180,8 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
     if product is None:
       self.response.write('Product is None: ' + product_id)
       return
-    transaction = Transaction(parent=product, buyer_id=buyer.key().id(), price=price)
+    transaction = Transaction(parent=product, buyer_id=buyer.key().id(),
+        price=price, count=count, paypal_transaction_id=paypal_transaction_id)
     transaction.put()
     self.response.write('success')
 
@@ -196,6 +199,7 @@ class ListTransactionRequestHandler(webapp2.RequestHandler):
     transactions = Transaction.all().ancestor(seller.key()).fetch(limit=5)
     for t in transactions:
       t.name = Product.get(t.key().parent()).name
+      t.datetime = t.timestamp.strftime('%B %d, %Y %H:%M')
     print len(transactions)
     template_values = {
       'name': seller.name,

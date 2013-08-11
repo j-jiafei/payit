@@ -46,7 +46,7 @@
             <td>{{ transaction.count }} </td>
             <td>{{ transaction.price }} </td>
             <td>{{ transaction.paypal_transaction_id }} </td>
-            <td>{{ transaction['timestamp'] }} </td>
+            <td>{{ transaction.datetime }} </td>
           </tr>
         {% endfor %}
       </table>
