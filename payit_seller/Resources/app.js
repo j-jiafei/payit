@@ -31,11 +31,12 @@ if (Ti.version < 1.8 ) {
 	var Window;
 	if (isTablet) {
 		Window = require('ui/tablet/ApplicationWindow');
+		SettingsWindow = require('ui/tablet/SettingsWindow');
 	}
 	else {
 		Window = require('ui/handheld/ApplicationWindow');
 	}
 
 	var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
-	new ApplicationTabGroup(Window).open();
+	new ApplicationTabGroup(Window, SettingsWindow).open();
 })();

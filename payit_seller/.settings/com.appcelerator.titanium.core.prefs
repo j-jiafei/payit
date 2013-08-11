@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
+provisioning_profiles/development/20C66014-4BCB-4E4E-BF02-CE0A4BD02B43/appid=com.payit.buyer
+provisioning_profiles/development/20C66014-4BCB-4E4E-BF02-CE0A4BD02B43/filepath=/Users/jack/Library/MobileDevice/Provisioning Profiles/20C66014-4BCB-4E4E-BF02-CE0A4BD02B43.mobileprovision
+provisioning_profiles/development/20C66014-4BCB-4E4E-BF02-CE0A4BD02B43/name=Buyer App Provisioning
+provisioning_profiles/development/20C66014-4BCB-4E4E-BF02-CE0A4BD02B43/uuid=20C66014-4BCB-4E4E-BF02-CE0A4BD02B43
 provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/appid=com.payit.seller
 provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/filepath=/Users/jack/Library/MobileDevice/Provisioning Profiles/36FB2507-0E70-4A04-B85A-2FC6792C8D54.mobileprovision
 provisioning_profiles/development/36FB2507-0E70-4A04-B85A-2FC6792C8D54/name=PayIt Seller

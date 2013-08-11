@@ -1,13 +1,13 @@
-function ApplicationTabGroup(Window) {
+function ApplicationTabGroup(Window, SettingsWindow) {
 	//create module instance
 	var self = Ti.UI.createTabGroup();
 	
 	//create app tabs
-	var win1 = new Window(L('Dash')),
-		win2 = new Window(L('Settings'));
+	var win1 = new Window(L('Storefront')),
+		win2 = new SettingsWindow(L('Settings'));
 	
 	var tab1 = Ti.UI.createTab({
-		title: L('Dash'),
+		title: L('Storefront'),
 		icon: '/images/KS_nav_ui.png',
 		window: win1
 	});
