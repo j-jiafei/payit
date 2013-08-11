@@ -164,7 +164,10 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
 
 class ListTransactionRequestHandler(webapp2.RequestHandler):
   def get(self):
-    pass
+    template_values = {
+    }
+    template = JINJA_ENVIRONMENT.get_template('transaction_list.html')
+    self.response.write(template.render(template_values))
 
 
 class IndexPageHandler(webapp2.RequestHandler):
@@ -177,7 +180,7 @@ class IndexPageHandler(webapp2.RequestHandler):
 
 class SignInRequestHandler(webapp2.RequestHandler):
   def post(self):
-    self.response.write('You are signed in')
+    self.redirect("/list-transactions")
 
 
 application = webapp2.WSGIApplication([

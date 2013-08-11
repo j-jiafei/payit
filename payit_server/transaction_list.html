@@ -6,7 +6,6 @@
   </head>
   <body>
 <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
@@ -14,7 +13,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Project name</a>
+        <a class="navbar-brand" href="#">Payit</a>
         <div class="nav-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
@@ -26,13 +25,46 @@
     </div>
 
     <div class="container">
-
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
-
+      <h1>Transaction Records</h1>
+      <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Count</th>
+          <th>Total Price</th>
+          <th>Paypal Transaction ID</th>
+          <th>Timestamp</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Book 1</td>
+          <td>1</td>
+          <td>43.0</td>
+          <td>125af3214</td>
+          <td>2013-08-10 23:48</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Book 2</td>
+          <td>1</td>
+          <td>65.0</td>
+          <td>125af3218</td>
+          <td>2013-08-10 23:48</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Book 3</td>
+          <td>1</td>
+          <td>21.0</td>
+          <td>125af32234</td>
+          <td>2013-08-10 23:48</td>
+        </tr>
+      </table>
+      <ul class="pagination pull-right">
+        <li><a href='#'>1</a></li>
+      </ul>
     </div><!-- /.container -->
-
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
   </body>
 </html>
