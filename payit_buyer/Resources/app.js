@@ -63,7 +63,7 @@ if (Ti.version < 1.8) {
 			var labelCell = Ti.UI.createLabel({
 				left : 0,
 				width : "60%",
-				text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
+				text : productListData[i].name,
 				font : {
 					fontSize : 16
 				},
@@ -191,8 +191,6 @@ if (Ti.version < 1.8) {
 			xhr.open("GET", sendGridAddress);
 			xhr.send();
 			
-			alert(sendGridAddress);
-
 			var doneButton = Ti.UI.createButton({
 				title : "Done",
 				width : 200,
