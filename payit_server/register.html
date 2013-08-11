@@ -6,19 +6,17 @@
   </head>
   <body>
     <div class="container">
-      <form class="form-signin" action="signin" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="text" class="input-block-level" placeholder="Email address" autofocus name='email'>
-        <input type="password" class="input-block-level" placeholder="Password" name='password'>
+      <form class="form-signin" action="new-user" method="post">
+        <h2 class="form-signin-heading">Please sign up</h2>
+        <input type="text" class="input-block-level" placeholder="Email address" autofocus name="email">
+        <input type="text" class="input-block-level" name="name" placeholder="Name">
+        <input type="password" class="input-block-level" name="password" placeholder="Password">
         <label>
           <input type="radio" name="user_group" value="seller" checked>Seller</input>
           <input type="radio" name="user_group" value="buyer">Buyer</input>
         </label>
-        <label class="checkbox">
-          <input type="checkbox" value="remember-me" name='remember-me'> Remember me
         </label>
-        <button class="btn btn-large btn-block" type="submit">Sign in</button>
-        <a class="btn btn-primary btn-large btn-block" type="submit" href='/register'>Sign up</a>
+        <button class="btn btn-large btn-primary btn-block" type="submit">Sign up</button>
       </form>
     </div> <!-- /container -->
     <script src="http://code.jquery.com/jquery.js"></script>

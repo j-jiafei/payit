@@ -3,6 +3,7 @@ import jinja2
 import os
 import json
 from google.appengine.ext import db
+from gaesessions import get_current_session
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -10,9 +11,11 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'])
 
 
+# FIME - Store hashed password
 class Seller(db.Model):
   email = db.EmailProperty()
   name = db.StringProperty()
+  password = db.StringProperty()
   address = db.PostalAddressProperty()
 
 
@@ -23,8 +26,10 @@ class SellerPayment(db.Model):
   app_secret = db.StringProperty()
 
 
+# FIME - Store hashed password
 class Buyer(db.Model):
   email = db.EmailProperty()
+  password = db.StringProperty()
 
 
 class BuyerPayment(db.Model):
@@ -172,6 +177,11 @@ class ListTransactionRequestHandler(webapp2.RequestHandler):
 
 class IndexPageHandler(webapp2.RequestHandler):
   def get(self):
+    session = get_current_session()
+    print session.get('email')
+    if session.get('email'):
+      self.redirect('/list-transactions')
+      return
     template_values = {
     }
     template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -180,10 +190,64 @@ class IndexPageHandler(webapp2.RequestHandler):
 
 class SignInRequestHandler(webapp2.RequestHandler):
   def post(self):
-    self.redirect("/list-transactions")
+    email = self.request.get('email')
+    password = self.request.get('password')
+    user_group = self.request.get('user_group')
+    remember_me = self.request.get('remember-me')
+    succ = False
+    if user_group == 'seller':
+      seller = Seller.all().filter('email = ', email).get()
+      if seller is not None and seller.password == password:
+        succ = True
+    elif user_group == 'buyer':
+      buyer = Buyer.all().filter('email = ', email).get()
+      print buyer.password
+      print password
+      if buyer is not None and buyer.password == password:
+        succ = True
+    if succ:
+      session = get_current_session()
+      session.regenerate_id()
+      if remember_me:
+        session['email'] = email
+      else:
+        session.set_quick('email', email)
+      self.redirect("/list-transactions")
+    else:
+      self.redirect("/")
+
+
+class RegisterRequestHandler(webapp2.RequestHandler):
+  def get(self):
+    template_values = {
+    }
+    template = JINJA_ENVIRONMENT.get_template('register.html')
+    self.response.write(template.render(template_values))
+
+
+class NewUserRequestHandler(webapp2.RequestHandler):
+  def post(self):
+    email = self.request.get('email')
+    name = self.request.get('name')
+    password = self.request.get('password')
+    user_group = self.request.get('user_group')
+    if user_group == 'seller':
+      if Seller.all().filter('email = ', email).get() is not None:
+        self.redirect('/register')
+        return
+      seller = Seller(email=email, name=name, password=password)
+      seller.put()
+    elif user_group == 'buyer':
+      if Buyer.all().filter('email = ', email).get() is not None:
+        self.redirect('/register')
+        return
+      buyer = Buyer(email=email, password=password)
+      buyer.put()
+    self.redirect('/')
 
 
 application = webapp2.WSGIApplication([
+  ('/new-user', NewUserRequestHandler),
   ('/new-seller', NewSellerRequestHandler),
   ('/new-buyer', NewBuyerRequestHandler),
   ('/pull-products', ProductPullRequestDummyHandler),
@@ -194,5 +258,6 @@ application = webapp2.WSGIApplication([
   ('/new-transaction', NewTransactionRequestHandler),
   ('/list-transactions', ListTransactionRequestHandler),
   ('/signin', SignInRequestHandler),
+  ('/register', RegisterRequestHandler),
   ('/', IndexPageHandler),
 ], debug=True)
