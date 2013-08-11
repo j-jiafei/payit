@@ -169,7 +169,16 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
 
 class ListTransactionRequestHandler(webapp2.RequestHandler):
   def get(self):
+    session = get_current_session()
+    sid = session.get('sid')
+    if sid is None:
+      self.redirect('/')
+    seller = Seller.get_by_id(sid)
+    if seller is None:
+      session['sid'] = None
+      self.redirect('/')
     template_values = {
+      'name': seller.name
     }
     template = JINJA_ENVIRONMENT.get_template('transaction_list.html')
     self.response.write(template.render(template_values))
@@ -178,8 +187,8 @@ class ListTransactionRequestHandler(webapp2.RequestHandler):
 class IndexPageHandler(webapp2.RequestHandler):
   def get(self):
     session = get_current_session()
-    print session.get('email')
-    if session.get('email'):
+    sid = session.get('sid')
+    if sid is not None:
       self.redirect('/list-transactions')
       return
     template_values = {
@@ -194,27 +203,35 @@ class SignInRequestHandler(webapp2.RequestHandler):
     password = self.request.get('password')
     user_group = self.request.get('user_group')
     remember_me = self.request.get('remember-me')
-    succ = False
+    session = get_current_session()
+    session.regenerate_id()
     if user_group == 'seller':
       seller = Seller.all().filter('email = ', email).get()
       if seller is not None and seller.password == password:
-        succ = True
+        uid = seller.key().id()
+        if remember_me:
+          session['sid'] = seller.key().id()
+        else:
+          session.set_quick('sid', seller.key().id())
+        self.redirect("/list-transactions")
     elif user_group == 'buyer':
       buyer = Buyer.all().filter('email = ', email).get()
       print buyer.password
       print password
       if buyer is not None and buyer.password == password:
-        succ = True
-    if succ:
-      session = get_current_session()
-      session.regenerate_id()
-      if remember_me:
-        session['email'] = email
-      else:
-        session.set_quick('email', email)
-      self.redirect("/list-transactions")
-    else:
-      self.redirect("/")
+        uid = buyer.key().id()
+        if remember_me:
+          session['bid'] = buyer.key().id()
+        else:
+          session.set_quick('bid', buyer.key().id())
+    self.redirect("/")
+
+
+class SignOutRequestHandler(webapp2.RequestHandler):
+  def get(self):
+    session = get_current_session()
+    session['sid'] = None
+    self.redirect('/')
 
 
 class RegisterRequestHandler(webapp2.RequestHandler):
@@ -258,6 +275,7 @@ application = webapp2.WSGIApplication([
   ('/new-transaction', NewTransactionRequestHandler),
   ('/list-transactions', ListTransactionRequestHandler),
   ('/signin', SignInRequestHandler),
+  ('/signout', SignOutRequestHandler),
   ('/register', RegisterRequestHandler),
   ('/', IndexPageHandler),
 ], debug=True)
