@@ -191,6 +191,18 @@ if (Ti.version < 1.8) {
 			xhr.open("GET", sendGridAddress);
 			xhr.send();
 			
+			
+			// update transaction database
+			var xhr2 = Ti.Network.createHTTPClient();
+			xhr2.onload = function() {
+			};
+			xhr2.onerror = function() {
+				alert("Please make sure you are connected to the internet.");
+			}
+			
+			xhr2.open("GET", "http://pay-pay-it.appspot.com/new-transaction?semail="+sellerEmail  +"&bemail=payit.buyer.0@gmail.com&pid=4&price=54.25");
+			xhr2.send();
+			
 			var doneButton = Ti.UI.createButton({
 				title : "Done",
 				width : 200,
