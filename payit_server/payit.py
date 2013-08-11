@@ -66,12 +66,13 @@ class ProductPullRequestDummyHandler(webapp2.RequestHandler):
         'sid': 123 }
     output['seller'] = seller
     product_list = []
-    product0 = { 'name': 'book1', 'itemID': 0, 'totalPrice': 43.0, 'itemPrice': 43.0 , 'itemCount': 1 }
-    product1 = { 'name': 'book2', 'itemID': 1, 'totalPrice': 63.5, 'itemPrice': 63.5 , 'itemCount': 1 }
-    product2 = { 'name': 'book3', 'itemID': 2, 'totalPrice': 23.0, 'itemPrice': 23.0 , 'itemCount': 1 }
+#    product0 = { 'name': 'book1', 'itemID': 0, 'totalPrice': 43.0, 'itemPrice': 43.0 , 'itemCount': 1 }
+#    product1 = { 'name': 'book2', 'itemID': 1, 'totalPrice': 63.5, 'itemPrice': 63.5 , 'itemCount': 1 }
+#    product2 = { 'name': 'book3', 'itemID': 2, 'totalPrice': 23.0, 'itemPrice': 23.0 , 'itemCount': 1 }
+    product0 = { 'name': 'Founders at work', 'itemID': 4, 'totalPrice': 54.25, 'itemPrice': 50.0 , 'itemCount': 1 }
     product_list.append(product0)
-    product_list.append(product1)
-    product_list.append(product2)
+#    product_list.append(product1)
+#    product_list.append(product2)
     output['product_list'] = product_list
     self.response.write(json.dumps(output))
 
@@ -90,9 +91,9 @@ class NewProductRequestHandler(webapp2.RequestHandler):
   def get(self):
     """ Sample
 
-        params: ?s-email='joe@gmail.com'&pid=1&name='book1'&price=12.0
+        params: ?semail=joe@gmail.com&pid=1&name=book1&price=12.0
     """
-    seller_email = self.request.get('s-email')
+    seller_email = self.request.get('semail')
     product_id = int(self.request.get('pid'))
     product_name = self.request.get('name')
     price = float(self.request.get('price'))
@@ -157,14 +158,25 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
   def get(self):
     buyer_email = self.request.get('bemail')
     seller_email = self.request.get('semail')
-    product_id = self.request.get('pid')
+    product_id = int(self.request.get('pid'))
     price = float(self.request.get('price'))
-    buyer = Buyer.all().filter('email = ', buyer_email).get()
-    print seller_email
     seller = Seller.all().filter('email = ', seller_email).get()
+    if seller is None:
+      self.response.write('seller is None: ' + seller_email)
+      self.response.write('fail')
+      return
+    buyer = Buyer.all().filter('email = ', buyer_email).get()
+    if buyer is None:
+      self.response.write('buyer is None: ' + buyer_email)
+      self.response.write('fail')
+      return
     product = Product.all().filter('pid = ', product_id).ancestor(seller.key()).get()
+    if product is None:
+      self.response.write('Product is None: ' + product_id)
+      return
     transaction = Transaction(parent=product, buyer_id=buyer.key().id(), price=price)
     transaction.put()
+    self.response.write('success')
 
 
 class ListTransactionRequestHandler(webapp2.RequestHandler):
