@@ -34,18 +34,20 @@ class BuyerPayment(db.Model):
 
 
 class Product(db.Model):
-  """ Parent: Seller """
+  """ Parent: Seller
+      pid is the seller local id for each product
+  """
+  pid = db.IntegerProperty()
+  name = db.StringProperty()
   price = db.FloatProperty()
-  seller_id = db.IntegerProperty()
 
 
 class Transaction(db.Model):
   """ Parent: Product """
   buyer_id = db.IntegerProperty()
+  price = db.FloatProperty()
   seller_geo = db.GeoPtProperty()
   buyer_geo = db.GeoPtProperty()
-  product_id = db.IntegerProperty()
-  price = db.FloatProperty()
 
 
 class ProductPullRequestDummyHandler(webapp2.RequestHandler):
@@ -84,7 +86,18 @@ class NewProductRequestHandler(webapp2.RequestHandler):
 
         params: ?s-email='joe@gmail.com'&pid=1&name='book1'&price=12.0
     """
-    pass
+    seller_email = self.request.get('s-email')
+    product_id = int(self.request.get('pid'))
+    product_name = self.request.get('name')
+    price = float(self.request.get('price'))
+# find seller first to be the parent of the product
+    seller = Seller.all().filter('email = ', seller_email).get()
+    if seller is None:
+      self.response.write('Bad seller email address')
+      return
+    product = Product(parent=seller, name=product_name, pid=product_id,
+      price=price)
+    product.put()
 
 
 class UpdateProductRequestHandler(webapp2.RequestHandler):
@@ -105,10 +118,61 @@ class SyncProductRequesthandler(webapp2.RequestHandler):
     pass
 
 
+class NewSellerRequestHandler(webapp2.RequestHandler):
+  """ Sample
+
+      params: ?email='jeff@gmail.com'&name='Demo bookstore'&address='4444 1st Ave, Bellevue, WA 92039'
+  """
+  def get(self):
+    email = self.request.get('email')
+    name = self.request.get('name')
+    address = self.request.get('address')
+    seller = Seller(email=email, name=name, address=address)
+    seller.put()
+
+
+class NewBuyerRequestHandler(webapp2.RequestHandler):
+  """ Sample
+
+      params: ?email='joe@gmail.com'
+  """
+  def get(self):
+    email = self.request.get('email')
+    buyer = Buyer(email=email)
+    buyer.put()
+    pass
+
+
+class NewTransactionRequestHandler(webapp2.RequestHandler):
+  """ Sample
+
+      params: ?bemail='12345'&semail='jeff@gmail.com'&pid='23455'&price=34.0&sgeo=''&bgeo=''
+  """
+  def get(self):
+    buyer_email = self.request.get('bemail')
+    seller_email = self.request.get('semail')
+    product_id = self.request.get('pid')
+    price = float(self.request.get('price'))
+    buyer = Buyer.all().filter('email = ', buyer_email).get()
+    print seller_email
+    seller = Seller.all().filter('email = ', seller_email).get()
+    product = Product.all().filter('pid = ', product_id).ancestor(seller.key()).get()
+    transaction = Transaction(parent=product, buyer_id=buyer.key().id(), price=price)
+    transaction.put()
+
+class ListTransactionRequestHandler(webapp2.RequestHandler):
+  def get(self):
+    pass
+
+
 application = webapp2.WSGIApplication([
+  ('/new-seller', NewSellerRequestHandler),
+  ('/new-buyer', NewBuyerRequestHandler),
   ('/pull-products', ProductPullRequestDummyHandler),
   ('/new-product', NewProductRequestHandler),
   ('/update-product', UpdateProductRequestHandler),
   ('/delete-product', DeleteProductRequestHandler),
   ('/sync-products', SyncProductRequesthandler),
+  ('/new-transaction', NewTransactionRequestHandler),
+  ('/list-transactions', ListTransactionRequestHandler)
 ], debug=True)
