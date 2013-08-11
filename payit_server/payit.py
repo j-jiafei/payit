@@ -4,6 +4,7 @@ import os
 import json
 from google.appengine.ext import db
 
+
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'])
@@ -160,9 +161,23 @@ class NewTransactionRequestHandler(webapp2.RequestHandler):
     transaction = Transaction(parent=product, buyer_id=buyer.key().id(), price=price)
     transaction.put()
 
+
 class ListTransactionRequestHandler(webapp2.RequestHandler):
   def get(self):
     pass
+
+
+class IndexPageHandler(webapp2.RequestHandler):
+  def get(self):
+    template_values = {
+    }
+    template = JINJA_ENVIRONMENT.get_template('index.html')
+    self.response.write(template.render(template_values))
+
+
+class SignInRequestHandler(webapp2.RequestHandler):
+  def post(self):
+    self.response.write('You are signed in')
 
 
 application = webapp2.WSGIApplication([
@@ -174,5 +189,7 @@ application = webapp2.WSGIApplication([
   ('/delete-product', DeleteProductRequestHandler),
   ('/sync-products', SyncProductRequesthandler),
   ('/new-transaction', NewTransactionRequestHandler),
-  ('/list-transactions', ListTransactionRequestHandler)
+  ('/list-transactions', ListTransactionRequestHandler),
+  ('/signin', SignInRequestHandler),
+  ('/', IndexPageHandler),
 ], debug=True)
