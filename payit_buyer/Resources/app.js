@@ -24,91 +24,137 @@ if (Ti.version < 1.8) {
 	//yourself what you consider a tablet form factor for android
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
 
-	var self = Ti.UI.createWindow({
-		title : "Pay It",
-		backgroundColor : 'white'
-	});
-
 	function priceFormatter(x) {
 		return x.toFixed(2);
 	}
 
-	//load scanner view
-	//it should scan information, and return info back
-	//to this view via some event
+	var activeWindow;
 
-	if (Ti.Platform.model == 'google_sdk' || Ti.Platform.model == 'Simulator') {
-		// if simulator skip bar code
-		var xhr = Ti.Network.createHTTPClient();
-		xhr.onload = function() {
-			var response = JSON.parse(this.responseText);
-			Ti.App.fireEvent('getBarCodeData', response);
-			scannerWindow.close();
+	function restartApp() {
+		activeWindow.close();
+		activeWindow = createWindow();
+		activeWindow.open();
+		
+			//load scanner view
+		//it should scan information, and return info back
+		//to this view via some event
 
-			if (Ti.Platform.osname == 'iphone' || Ti.Platform.osname == 'ipad') {
-				Ti.UI.iPhone.statusBarHidden = false;
+		if (Ti.Platform.model == 'google_sdk' || Ti.Platform.model == 'Simulator') {
+			// if simulator skip bar code
+			var xhr = Ti.Network.createHTTPClient();
+			xhr.onload = function() {
+				var response = JSON.parse(this.responseText);
+				Ti.App.fireEvent('getBarCodeData', response);
+				scannerWindow.close();
+
+				if (Ti.Platform.osname == 'iphone' || Ti.Platform.osname == 'ipad') {
+					Ti.UI.iPhone.statusBarHidden = false;
+				}
+			};
+			xhr.onerror = function() {
+				alert("Please make sure you are connected to the internet.");
 			}
-		};
-		xhr.onerror = function() {
-			alert("Please make sure you are connected to the internet.");
+			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=demo@bookstore.com&pid=1&pid=2&pid=3&pid=3");
+			xhr.send();
+		} else {
+			barCodeScanner = require('modules/pages/barcode');
+			barCodeScanner.startScan();
+
 		}
-		xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=demo@bookstore.com&pid=1&pid=2&pid=3&pid=3");
-		xhr.send();
-	} else {
-		barCodeScanner = require('modules/pages/barcode');
-		barCodeScanner.startScan();
-
 	}
-	//add listener for product data from server
-	Ti.App.addEventListener('getBarCodeData', function(data) {
 
-		var payPalButtonWindow = Ti.UI.createWindow({
+	function createWindow() {
+		var self = Ti.UI.createWindow({
 			title : "Pay It",
 			backgroundColor : 'white'
 		});
 
-		var sellerName = data["seller"]["merchantName"];
-		var sellerEmail = data["seller"]["email"];
+	
+		//add listener for product data from server
+		Ti.App.addEventListener('getBarCodeData', function(data) {
 
-		var productListData = data["product_list"];
+			var payPalButtonWindow = Ti.UI.createWindow({
+				title : "Pay It",
+				backgroundColor : 'white'
+			});
 
-		var totalPrice = 0;
+			var sellerName = data["seller"]["merchantName"];
+			var sellerEmail = data["seller"]["email"];
 
-		for (var i = 0; i < productListData.length; i++) {
-			totalPrice += productListData[i]["itemPrice"];
-		}
+			var productListData = data["product_list"];
 
-		var u = "";
-		var Paypal = require('ti.paypal');
+			var totalPrice = 0;
+			var emailBody = "Here is a summary of your sale.<br><TABLE><TR><TH>ITEM</TH><TH>PRICE</TH></TR>"
 
-		Ti.API.info("addPayPalButton");
+			var u = "";
+			var Paypal = require('ti.paypal');
 
-		var productListTableData = [];
+			Ti.API.info("addPayPalButton");
 
-		var row = Ti.UI.createTableViewRow({
-			height : 50
-		});
-		var labelCell = Ti.UI.createLabel({
-			left : 0,
-			width : "100%",
-			text : "Order Summary",
-			font : {
-				fontSize : 30,
-			},
-			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
-		});
+			var productListTableData = [];
 
-		row.add(labelCell);
-		productListTableData.push(row);
+			var row = Ti.UI.createTableViewRow({
+				height : 50
+			});
+			var labelCell = Ti.UI.createLabel({
+				left : 0,
+				width : "100%",
+				text : "Order Summary",
+				font : {
+					fontSize : 30,
+				},
+				textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+			});
 
-		for (var i = 0, j = productListData.length; i < j; i++) {
+			row.add(labelCell);
+			productListTableData.push(row);
+
+			for (var i = 0, j = productListData.length; i < j; i++) {
+				totalPrice += productListData[i]["itemPrice"];
+
+				var row = Ti.UI.createTableViewRow({
+					height : 20
+				});
+				var labelCell = Ti.UI.createLabel({
+					left : 0,
+					width : "50%",
+					text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
+					font : {
+						fontSize : 16,
+					},
+					textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+				});
+				var priceCell = Ti.UI.createLabel({
+					left : "50%",
+					width : "50%",
+					text : priceFormatter(productListData[i]["itemPrice"]),
+					font : {
+						fontSize : 16
+					},
+					textAlign : Ti.UI.TEXT_ALIGNMENT_RIGHT,
+				});
+
+				row.add(labelCell);
+				row.add(priceCell);
+
+				productListTableData.push(row);
+
+				// update email too
+				emailBody += "<TR><TD>" + productListData[i].name + " (ID #" + productListData[i].itemID + ")" + "</TD><TD>" + priceFormatter(productListData[i]["itemPrice"]) + "</TD></TR>";
+
+			}
+
+			emailBody += "</TABLE>"
+
+			var emailBody = Ti.Network.encodeURIComponent(emailBody);
+
 			var row = Ti.UI.createTableViewRow({
 				height : 20
 			});
 			var labelCell = Ti.UI.createLabel({
 				left : 0,
 				width : "50%",
-				text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
+				text : "Total:",
 				font : {
 					fontSize : 16,
 				},
@@ -117,7 +163,7 @@ if (Ti.version < 1.8) {
 			var priceCell = Ti.UI.createLabel({
 				left : "50%",
 				width : "50%",
-				text : priceFormatter(productListData[i]["itemPrice"]),
+				text : "$" + priceFormatter(totalPrice),
 				font : {
 					fontSize : 16
 				},
@@ -129,109 +175,132 @@ if (Ti.version < 1.8) {
 
 			productListTableData.push(row);
 
-		}
-
-		var row = Ti.UI.createTableViewRow({
-			height : 20
-		});
-		var labelCell = Ti.UI.createLabel({
-			left : 0,
-			width : "50%",
-			text : "Total:",
-			font : {
-				fontSize : 16,
-			},
-			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
-		});
-		var priceCell = Ti.UI.createLabel({
-			left : "50%",
-			width : "50%",
-			text : "$" + priceFormatter(totalPrice),
-			font : {
-				fontSize : 16
-			},
-			textAlign : Ti.UI.TEXT_ALIGNMENT_RIGHT,
-		});
-
-		row.add(labelCell);
-		row.add(priceCell);
-
-		productListTableData.push(row);
-
-		var orderSummaryTable = Ti.UI.createTableView({
-			data : productListTableData,
-			top : 20,
-			footerTitle : "",
-			width : width - 40,
-			height : Ti.UI.SIZE,
-			scrollable : false
-		});
-
-		payPalButtonWindow.add(orderSummaryTable);
-		var button = Paypal.createPaypalButton({
-			width : 152 + u,
-			height : 43 + u,
-			bottom : 40 + u,
-			buttonStyle : Paypal.BUTTON_152x33,
-			language : 'en_US',
-			textStyle : Paypal.PAYPAL_TEXT_PAY,
-			appID : "APP-80W284485P519543T",
-			paypalEnvironment : Paypal.PAYPAL_ENV_SANDBOX, // : Paypal.PAYPAL_ENV_LIVE
-			enableShipping : false,
-			payment : {
-				merchantName : sellerName,
-				paymentType : Paypal.PAYMENT_TYPE_GOODS,
-				subtotal : totalPrice,
-				tax : 0,
-				shipping : 0,
-				currency : 'USD',
-				recipient : sellerEmail,
-				//customID : strSellerId + "-" + Ti.App.Properties.getString("user_id") + "-" + objConversationData.posting_id,
-				invoiceItems : productListData
-			},
-			//ipnUrl : Ti.App.Properties.getString("local_address") + 'mobile/transaction/complete',
-			memo : 'transaction via PayIt kiosk'
-		});
-
-		// Events available
-		button.addEventListener('paymentCancelled', function(e) {
-			Ti.API.info('Payment Cancelled.');
-
-		});
-		button.addEventListener('paymentSuccess', function(e) {
-			Ti.API.info(JSON.stringify(e));
-			Ti.API.info('Payment Success.  TransactionID: ' + e.transactionID + ', Reloading...');
-
-			payPalButtonWindow.remove(button);
-
-			var success_image = Ti.UI.createImageView({
-				image : "/images/success.jpg",
-				width : "auto",
-				height : "auto",
-				bottom : 20 + u,
+			var orderSummaryTable = Ti.UI.createTableView({
+				data : productListTableData,
+				top : 20,
+				footerTitle : "",
+				width : width - 40,
+				height : Ti.UI.SIZE,
+				scrollable : false
 			});
 
-			payPalButtonWindow.add(success_image);
+			payPalButtonWindow.add(orderSummaryTable);
+			var button = Paypal.createPaypalButton({
+				width : 152 + u,
+				height : 43 + u,
+				bottom : 40 + u,
+				buttonStyle : Paypal.BUTTON_152x33,
+				language : 'en_US',
+				textStyle : Paypal.PAYPAL_TEXT_PAY,
+				appID : "APP-80W284485P519543T",
+				paypalEnvironment : Paypal.PAYPAL_ENV_SANDBOX, // : Paypal.PAYPAL_ENV_LIVE
+				enableShipping : false,
+				payment : {
+					merchantName : sellerName,
+					paymentType : Paypal.PAYMENT_TYPE_GOODS,
+					subtotal : totalPrice,
+					tax : 0,
+					shipping : 0,
+					currency : 'USD',
+					recipient : sellerEmail,
+					//customID : strSellerId + "-" + Ti.App.Properties.getString("user_id") + "-" + objConversationData.posting_id,
+					invoiceItems : productListData
+				},
+				//ipnUrl : Ti.App.Properties.getString("local_address") + 'mobile/transaction/complete',
+				memo : 'transaction via PayIt kiosk'
+			});
+
+			// Events available
+			button.addEventListener('paymentCancelled', function(e) {
+				Ti.API.info('Payment Cancelled.');
+
+			});
+			button.addEventListener('paymentSuccess', function(e) {
+				Ti.API.info(JSON.stringify(e));
+
+				payPalButtonWindow.remove(button);
+
+				var success_image = Ti.UI.createImageView({
+					image : "/images/success.jpg",
+					width : "auto",
+					height : "auto",
+					bottom : 20 + u,
+				});
+
+				payPalButtonWindow.add(success_image);
+
+				// send receipt
+				var xhr = Ti.Network.createHTTPClient();
+				xhr.onload = function() {
+				};
+				xhr.onerror = function() {
+					alert("Please make sure you are connected to the internet.");
+				}
+				var emailSubject = Ti.Network.encodeURIComponent("Receipt for Transaction " + e.transaction);
+
+				//xhr.open("GET", "https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com");
+				xhr.open("GET", "https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com");
+
+				xhr.send();
+
+				var doneButton = Ti.UI.createButton({
+					title : "DONE"
+				});
+
+				doneButton.addEventListener('click', restartApp);
+				payPalButtonWindow.add(doneButton);
+
+			});
+
+			button.addEventListener('paymentError', function(e) {
+				Ti.API.info('Payment Error,  errorCode: ' + e.errorCode + ', errorMessage: ' + e.errorMessage);
+			});
+
+			button.addEventListener('buttonDisplayed', function() {
+				Ti.API.info('The button was displayed!');
+			});
+			button.addEventListener('buttonError', function() {
+				Ti.API.info('The button failed to display!');
+			});
+
+			payPalButtonWindow.add(button);
+
+			button.fireEvent("click");
+			payPalButtonWindow.open();
+
+			button.fireEvent("click");
 		});
+		return self;
+	}
 
-		button.addEventListener('paymentError', function(e) {
-			Ti.API.info('Payment Error,  errorCode: ' + e.errorCode + ', errorMessage: ' + e.errorMessage);
-		});
+	activeWindow = createWindow();
+	activeWindow.open();
+	
+		//load scanner view
+		//it should scan information, and return info back
+		//to this view via some event
 
-		button.addEventListener('buttonDisplayed', function() {
-			Ti.API.info('The button was displayed!');
-		});
-		button.addEventListener('buttonError', function() {
-			Ti.API.info('The button failed to display!');
-		});
+		if (Ti.Platform.model == 'google_sdk' || Ti.Platform.model == 'Simulator') {
+			// if simulator skip bar code
+			var xhr = Ti.Network.createHTTPClient();
+			xhr.onload = function() {
+				var response = JSON.parse(this.responseText);
+				Ti.App.fireEvent('getBarCodeData', response);
+				scannerWindow.close();
 
-		payPalButtonWindow.add(button);
+				if (Ti.Platform.osname == 'iphone' || Ti.Platform.osname == 'ipad') {
+					Ti.UI.iPhone.statusBarHidden = false;
+				}
+			};
+			xhr.onerror = function() {
+				alert("Please make sure you are connected to the internet.");
+			}
+			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=demo@bookstore.com&pid=1&pid=2&pid=3&pid=3");
+			xhr.send();
+		} else {
+			barCodeScanner = require('modules/pages/barcode');
+			barCodeScanner.startScan();
 
-		button.fireEvent("click");
-		payPalButtonWindow.open();
+		}
 
-		button.fireEvent("click");
-	});
-
-	self.open();
 })();
