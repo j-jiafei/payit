@@ -62,10 +62,11 @@ class Transaction(db.Model):
 class ProductPullRequestDummyHandler(webapp2.RequestHandler):
   """ Dummy request handler for demo or debugging use """
   def get(self):
+    email = self.request.get('semail')
     output = {}
     seller = {
         'merchantName': 'Demo Bookstore',
-        'email': 'demo@bookstore.com',
+        'email': email,
         'sid': 123 }
     output['seller'] = seller
     product_list = []
