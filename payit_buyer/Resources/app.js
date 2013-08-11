@@ -88,6 +88,7 @@ if (Ti.version < 1.8) {
 			emailBody += "<TR><TD>" + productListData[i].name + " (ID #" + productListData[i].itemID + ")" + "</TD><TD>" + priceFormatter(productListData[i]["itemPrice"]) + "</TD></TR>";
 
 		}
+		emailBody += "<TR><TD><strong>Total:</strong></TD><TD>$" + priceFormatter(totalPrice) + "</TD></TR>";
 
 		emailBody += "</TABLE>"
 
@@ -184,14 +185,13 @@ if (Ti.version < 1.8) {
 			xhr.onerror = function() {
 				alert("Please make sure you are connected to the internet.");
 			}
-			var emailSubject = Ti.Network.encodeURIComponent("Receipt for Transaction " + e.transaction);
-			
-			var sendGridAddress="https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com";
-			
+			var emailSubject = Ti.Network.encodeURIComponent("Receipt for Transaction " + e.transactionID);
+
+			var sendGridAddress = "https://sendgrid.com/api/mail.send.json?api_user=conniefan&api_key=antigone&to=" + sellerEmail + "&subject=" + emailSubject + "&html=" + emailBody + "&from=payit.notices@gmail.com&fromname=PayIt&replyto=payit.notices@gmail.com";
+
 			xhr.open("GET", sendGridAddress);
 			xhr.send();
-			
-			
+
 			// update transaction database
 			var xhr2 = Ti.Network.createHTTPClient();
 			xhr2.onload = function() {
@@ -199,10 +199,10 @@ if (Ti.version < 1.8) {
 			xhr2.onerror = function() {
 				alert("Please make sure you are connected to the internet.");
 			}
-			
-			xhr2.open("GET", "http://pay-pay-it.appspot.com/new-transaction?semail="+sellerEmail  +"&bemail=payit.buyer.0@gmail.com&pid=4&price=54.25");
+
+			xhr2.open("GET", "http://pay-pay-it.appspot.com/new-transaction?semail=" + sellerEmail + "&bemail=payit.buyer.0@gmail.com&pid=4&price=54.25&count=1&paypaltid=" + e.transactionID);
 			xhr2.send();
-			
+
 			var doneButton = Ti.UI.createButton({
 				title : "Done",
 				width : 200,
@@ -264,7 +264,7 @@ if (Ti.version < 1.8) {
 			xhr.onerror = function() {
 				alert("Please make sure you are connected to the internet.");
 			}
-			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=demo@bookstore.com&pid=1&pid=2&pid=3&pid=3");
+			xhr.open("GET", "http://pay-pay-it.appspot.com/pull-products?semail=payit@mailinator.com&pid=4");
 			xhr.send();
 		} else {
 			barCodeScanner = require('modules/pages/barcode');
