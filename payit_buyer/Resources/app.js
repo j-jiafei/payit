@@ -29,6 +29,10 @@ if (Ti.version < 1.8) {
 		backgroundColor : 'white'
 	});
 
+	function priceFormatter(x) {
+		return x.toFixed(2);
+	}
+
 	//load scanner view
 	//it should scan information, and return info back
 	//to this view via some event
@@ -77,19 +81,98 @@ if (Ti.version < 1.8) {
 		var u = "";
 		var Paypal = require('ti.paypal');
 
-		function processPaypalSale(response) {
-			Ti.App.removeEventListener("paypal.sale.success", processPaypalSale);
-		}
-
-
 		Ti.API.info("addPayPalButton");
 
+		var productListTableData = [];
+
+		var row = Ti.UI.createTableViewRow({
+			height : 50
+		});
+		var labelCell = Ti.UI.createLabel({
+			left : 0,
+			width : "100%",
+			text : "Order Summary",
+			font : {
+				fontSize : 30,
+			},
+			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+		});
+
+		row.add(labelCell);
+		productListTableData.push(row);
+
+		for (var i = 0, j = productListData.length; i < j; i++) {
+			var row = Ti.UI.createTableViewRow({
+				height : 20
+			});
+			var labelCell = Ti.UI.createLabel({
+				left : 0,
+				width : "50%",
+				text : productListData[i].name + " (ID #" + productListData[i].itemID + ")",
+				font : {
+					fontSize : 16,
+				},
+				textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+			});
+			var priceCell = Ti.UI.createLabel({
+				left : "50%",
+				width : "50%",
+				text : priceFormatter(productListData[i]["itemPrice"]),
+				font : {
+					fontSize : 16
+				},
+				textAlign : Ti.UI.TEXT_ALIGNMENT_RIGHT,
+			});
+
+			row.add(labelCell);
+			row.add(priceCell);
+
+			productListTableData.push(row);
+
+		}
+
+		var row = Ti.UI.createTableViewRow({
+			height : 20
+		});
+		var labelCell = Ti.UI.createLabel({
+			left : 0,
+			width : "50%",
+			text : "Total:",
+			font : {
+				fontSize : 16,
+			},
+			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+		});
+		var priceCell = Ti.UI.createLabel({
+			left : "50%",
+			width : "50%",
+			text : "$" + priceFormatter(totalPrice),
+			font : {
+				fontSize : 16
+			},
+			textAlign : Ti.UI.TEXT_ALIGNMENT_RIGHT,
+		});
+
+		row.add(labelCell);
+		row.add(priceCell);
+
+		productListTableData.push(row);
+
+		var orderSummaryTable = Ti.UI.createTableView({
+			data : productListTableData,
+			top : 20,
+			footerTitle : "",
+			width : width - 40,
+			height : Ti.UI.SIZE,
+			scrollable : false
+		});
+
+		payPalButtonWindow.add(orderSummaryTable);
 		var button = Paypal.createPaypalButton({
 			width : 152 + u,
 			height : 43 + u,
+			bottom : 40 + u,
 			buttonStyle : Paypal.BUTTON_152x33,
-			top : 0 + u,
-			left : 0 + u,
 			language : 'en_US',
 			textStyle : Paypal.PAYPAL_TEXT_PAY,
 			appID : "APP-80W284485P519543T",
@@ -116,12 +199,21 @@ if (Ti.version < 1.8) {
 
 		});
 		button.addEventListener('paymentSuccess', function(e) {
-			alert("yay");
 			Ti.API.info(JSON.stringify(e));
 			Ti.API.info('Payment Success.  TransactionID: ' + e.transactionID + ', Reloading...');
 
-			Ti.App.addEventListener("paypal.sale.success", processPaypalSale);
+			payPalButtonWindow.remove(button);
+
+			var success_image = Ti.UI.createImageView({
+				image : "/images/success.jpg",
+				width : "auto",
+				height : "auto",
+				bottom : 20 + u,
+			});
+
+			payPalButtonWindow.add(success_image);
 		});
+
 		button.addEventListener('paymentError', function(e) {
 			Ti.API.info('Payment Error,  errorCode: ' + e.errorCode + ', errorMessage: ' + e.errorMessage);
 		});
